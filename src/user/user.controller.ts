@@ -5,7 +5,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
 
 @ApiBearerAuth()
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
