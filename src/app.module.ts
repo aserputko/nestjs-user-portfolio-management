@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 import { ProfileModule } from './profile/profile.module';
 import { ProjectModule } from './project/project.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ProjectModule } from './project/project.module';
       autoLoadEntities: true,
       synchronize: true, // Don't use this in production
     }),
+    AuthModule,
     UserModule,
     ProfileModule,
     ProjectModule,

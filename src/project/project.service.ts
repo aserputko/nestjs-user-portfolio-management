@@ -1,12 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Profile } from 'src/profile/entities/profile.entity';
-import { User } from 'src/user/entities/user.entity';
+
 import { Repository } from 'typeorm';
+import { Profile } from '../profile/entities/profile.entity';
+import { User } from '../user/entities/user.entity';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project } from './entities/project.entity';
 
+@ApiBearerAuth()
 @Injectable()
 export class ProjectService {
   constructor(
@@ -16,13 +19,13 @@ export class ProjectService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async findAll() {
-    return this.projectRepository.find({ loadRelationIds: true });
+  async findAll(userId: number) {
+    return this.projectRepository.find({ where: { user: { id: userId } }, loadRelationIds: true });
   }
 
-  async findOne(id: number) {
+  async findOne(userId: number, id: number) {
     const project = await this.projectRepository.findOne({
-      where: { id: +id },
+      where: { id: +id, user: { id: userId } },
       loadRelationIds: true,
     });
     if (!project) {
@@ -31,12 +34,12 @@ export class ProjectService {
     return project;
   }
 
-  async create(createProjectDto: CreateProjectDto) {
+  async create(userId: number, createProjectDto: CreateProjectDto) {
     const user = await this.userRepository.findOne({
-      where: { id: +createProjectDto.userId },
+      where: { id: userId },
     });
     if (!user) {
-      throw new NotFoundException(`User #${createProjectDto.userId} not found`);
+      throw new NotFoundException(`User #${userId} not found`);
     }
 
     const project = this.projectRepository.create({
@@ -46,20 +49,17 @@ export class ProjectService {
     return this.projectRepository.save(project);
   }
 
-  async update(id: number, updateProjectDto: UpdateProjectDto) {
-    const project = await this.projectRepository.preload({
-      id: +id,
-      ...updateProjectDto,
-    });
+  async update(userId: number, id: number, updateProjectDto: UpdateProjectDto) {
+    const project = await this.findOne(userId, id);
 
     if (!project) {
       throw new NotFoundException(`Project #${id} not found`);
     }
-    return this.projectRepository.save(project);
+    return this.projectRepository.save({ project, ...updateProjectDto });
   }
 
-  async remove(id: number) {
-    const project = await this.findOne(id);
+  async remove(userId: number, id: number) {
+    const project = await this.findOne(userId, id);
     return this.projectRepository.remove(project);
   }
 }
