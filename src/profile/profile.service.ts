@@ -22,7 +22,8 @@ export class ProfileService {
   async findOne(id: number) {
     const profile = await this.profileRepository.findOne({
       where: { id: +id },
-      loadRelationIds: true,
+      // loadRelationIds: true,
+      relations: ['user'],
     });
     if (!profile) {
       throw new NotFoundException(`Profile #${id} not found`);
@@ -40,7 +41,7 @@ export class ProfileService {
 
     const profile = this.profileRepository.create({
       ...createProfileDto,
-      email: user.email,
+      // email: user.email,
       user,
     });
     return this.profileRepository.save(profile);

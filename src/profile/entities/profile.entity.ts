@@ -6,9 +6,6 @@ export class Profile {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
-  email: string;
-
   @Column()
   name: string;
 
