@@ -1,8 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { SignupDto } from './dto/signup.dto';
+import { AuthLocalGuard } from './strategies/auth-local.guard';
+import { Public } from './strategies/auth-public.decorator';
 
 @ApiBearerAuth()
 @Controller('auth')
@@ -14,8 +16,11 @@ export class AuthController {
     return this.authService.signup(signupDto);
   }
 
+  @Public()
+  @UseGuards(AuthLocalGuard)
+  @HttpCode(HttpStatus.OK)
   @Post('login')
-  login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+  login(@Request() req, @Body() loginDto: LoginDto) {
+    return this.authService.login(req.user.id);
   }
 }
