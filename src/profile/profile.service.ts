@@ -32,6 +32,6 @@ export class ProfileService {
     if (!profile) {
       throw new NotFoundException(`Profile not found`);
     }
-    return this.profileRepository.save({ ...profile, updateProfileDto });
+    return this.profileRepository.save({ ...profile, ...updateProfileDto });
   }
 }

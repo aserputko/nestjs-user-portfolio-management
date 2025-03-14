@@ -11,6 +11,8 @@ import { Public } from './strategies/auth-public.decorator';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
+  @HttpCode(HttpStatus.OK)
   @Post('signup')
   signup(@Body() signupDto: SignupDto) {
     return this.authService.signup(signupDto);

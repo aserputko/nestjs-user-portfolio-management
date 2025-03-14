@@ -7,6 +7,7 @@ import { AuthJwtGuard } from './auth/strategies/auth-jwt.guard';
 import { ProfileModule } from './profile/profile.module';
 import { ProjectModule } from './project/project.module';
 import { UserModule } from './user/user.module';
+import { PortfolioModule } from './portfolio/portfolio.module';
 
 @Module({
   imports: [
@@ -19,12 +20,13 @@ import { UserModule } from './user/user.module';
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
       autoLoadEntities: true,
-      synchronize: true, // Don't use this in production
+      // synchronize: true, // Don't use this in production
     }),
     AuthModule,
     UserModule,
     ProfileModule,
     ProjectModule,
+    PortfolioModule,
   ],
   providers: [
     {
